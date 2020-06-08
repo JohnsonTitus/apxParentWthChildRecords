@@ -1,0 +1,120 @@
+public class apxSocialMetrics {
+    
+    public class SocialInfo{
+        Integer none;
+        Integer twitter;
+        Integer facebook;
+        
+        public SocialInfo(){
+            none=0;
+            twitter=0;
+            facebook=0;
+        }
+      
+    }
+    
+    /*
+    public static Map<ID,SocialInfo> getResults(List<Account> accounts){
+        
+        //map account ID to account
+        Map<ID,Account> allAccounts = new Map<ID,Account>(accounts);
+        
+        System.debug(allAccounts.get(accounts[0].id));
+        System.debug('all keyset ' +allAccounts.keySet());
+        //retrieve all contacts
+        List<Contact> allContacts = [select ID, AccountID, TwitterID__c, FacebookID__c from Contact where AccountID in :allAccounts.keySet() ];
+        
+     
+        System.debug('contact found ' + allContacts[0].ID);
+        
+        
+        //created an instance of map accountid to SocialInfo to collect the results to return
+        Map<ID,SocialInfo> results = new Map<ID,SocialInfo>();
+        
+        for(Contact c : allContacts){
+
+			//check if there exists a map record for accountid to socialinfo
+			//it will be found if a contact with this accountID was already iterated
+			//in that case thus update the member variable of SocialInfo
+			SocialInfo si = results.get(c.accountID);
+            
+			//if not i.e. a contact with the accountid was not iterated before
+			//so create a new SocialInfo object
+			//and create a new map of accountid to the new object
+			if(result == null){
+				si = new SocialInfo();
+				results.put(c.accountID,si);
+			}
+            
+            
+            
+            if(c.TwitterID__c !=null){
+                si.twitter++;
+                flag= true;
+            }
+            if(c.FacebookID__c !=null){
+                si.facebook++;
+                flag = true;
+            }
+            if(!flag)
+                si.none++;
+            
+                          
+                
+        }
+		
+        
+        return results;
+
+        
+        
+    }
+*/
+    
+    public static Map<ID,SocialInfo> getResults(List<Account> accounts){
+        
+        //map account ID to account
+        Map<ID,Account> allAccounts = new Map<ID,Account>(accounts);
+        
+        //retrieve related contacts in each account
+        List<Account> allAccts = [select Id, (select ID, AccountID, TwitterID__c, FacebookID__c from Contacts) from Account where Id in :allAccounts.keySet() ];
+        
+        //created an instance of map accountid to SocialInfo to collect the results to return
+        Map<ID,SocialInfo> results = new Map<ID,SocialInfo>();
+        
+        for(Account a : allAccts){
+            SocialInfo si;
+            Boolean flag;
+            if(a.contacts.size() > 0){
+                //its a counter to check if neither twitter nor facebook exists
+            	flag = false;
+            	si = new SocialInfo();
+                results.put(a.Id, si);
+            }
+            
+            for(Contact c : a.Contacts){
+                
+                
+            
+            	if(c.TwitterID__c !=null){
+                	si.twitter++;
+                	flag= true;
+            	}
+                
+            	if(c.FacebookID__c !=null){
+                	si.facebook++;
+                	flag = true;
+            	}
+            	if(!flag)
+                	si.none++;
+                  
+        	}
+		           
+        }    
+            
+        return results;
+      
+    }
+    
+
+}
